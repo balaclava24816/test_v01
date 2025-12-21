@@ -1,0 +1,36 @@
+v01/
+├─ src/
+│  ├─ Experience/
+│  │  ├─ Utils/
+│  │  │  ├─ EventEmitter.js
+│  │  │  ├─ Resources.js
+│  │  │  ├─ Sizes.js
+│  │  │  └─ Time.js
+│  │  ├─ World/
+│  │  │  ├─ Environment.js
+│  │  │  ├─ Floor.js
+│  │  │  └─ World.js
+│  │  ├─ Camera.js
+│  │  ├─ Experience.js
+│  │  ├─ Renderer.js
+│  │  └─ sources.js
+│  ├─ index.html
+│  ├─ script.js
+│  └─ style.css
+├─ static/
+│  ├─ models/
+│  └─ textures/
+│     ├─ dirt/
+│     │  ├─ color.jpg
+│     │  └─ normal.jpg
+│     └─ environmentMap/
+│        ├─ nx.png
+│        ├─ ny.png
+│        ├─ nz.png
+│        ├─ px.png
+│        ├─ py.png
+│        └─ pz.png
+├─ package-lock.json
+├─ package.json
+├─ tree.txt
+└─ vite.config.js

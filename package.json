@@ -1,0 +1,21 @@
+{
+  "name": "v01",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "three": "^0.178.0",
+    "vite": "^7.0.4"
+  },
+  "devDependencies": {
+    "@dimforge/rapier3d": "^0.18.0",
+    "vite-plugin-wasm": "^3.5.0"
+  }
+}
