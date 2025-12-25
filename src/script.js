@@ -1,4 +1,4 @@
 import './style.css'
-import Experience from './Experience/Experience.js'
+import Game from './Game/Game.js'
 
-const experience = new Experience(document.querySelector('canvas.webgl'))
+const game = new Game(document.querySelector('canvas.webgl'))

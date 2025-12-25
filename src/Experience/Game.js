@@ -3,13 +3,12 @@ import Sizes from "./Utils/Sizes.js"
 import Time from "./Utils/Time.js"
 import Camera from "./Camera.js"
 import Renderer from './Renderer.js'
-import World from './World/World.js'
 import Resources from './Utils/Resources.js'
 import sources from './sources.js'
 
 let instance = null
 
-export default class Experience
+export default class Game
 {
     constructor(canvas)
     {
@@ -21,7 +20,7 @@ export default class Experience
         instance = this
 
         // Global access
-        window.experience = this
+        window.game = this
         
         // Options
         this.canvas = canvas
@@ -33,8 +32,7 @@ export default class Experience
         this.resources = new Resources(sources)
         this.camera = new Camera()
         this.renderer = new Renderer()
-        this.world = new World()
-
+        
         // Sizes resize event
         this.sizes.on('resize', () =>
         {

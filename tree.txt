@@ -1,6 +1,6 @@
 v01/
 ├─ src/
-│  ├─ Experience/
+│  ├─ Game/
 │  │  ├─ Utils/
 │  │  │  ├─ EventEmitter.js
 │  │  │  ├─ Resources.js
@@ -11,7 +11,7 @@ v01/
 │  │  │  ├─ Floor.js
 │  │  │  └─ World.js
 │  │  ├─ Camera.js
-│  │  ├─ Experience.js
+│  │  ├─ Game.js
 │  │  ├─ Renderer.js
 │  │  └─ sources.js
 │  ├─ index.html
