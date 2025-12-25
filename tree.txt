@@ -1,4 +1,4 @@
-v01/
+test_v01/
 ├─ src/
 │  ├─ Game/
 │  │  ├─ Utils/
@@ -6,30 +6,28 @@ v01/
 │  │  │  ├─ Resources.js
 │  │  │  ├─ Sizes.js
 │  │  │  └─ Time.js
-│  │  ├─ World/
-│  │  │  ├─ Environment.js
-│  │  │  ├─ Floor.js
-│  │  │  └─ World.js
 │  │  ├─ Camera.js
 │  │  ├─ Game.js
 │  │  ├─ Renderer.js
 │  │  └─ sources.js
+│  ├─ Scenes/
+│  │  ├─ Levels/
+│  │  │  ├─ Level_1.js
+│  │  │  ├─ Level_Boss.js
+│  │  │  └─ LevelBase.js
+│  │  ├─ CutsceneScene.js
+│  │  ├─ MenuScene.js
+│  │  └─ SceneManager.js
 │  ├─ index.html
 │  ├─ script.js
 │  └─ style.css
 ├─ static/
 │  ├─ models/
+│  │  ├─ cutscene_intro_v01.glb
+│  │  ├─ level_1_v01.glb
+│  │  └─ menu_scene_v01.glb
 │  └─ textures/
-│     ├─ dirt/
-│     │  ├─ color.jpg
-│     │  └─ normal.jpg
-│     └─ environmentMap/
-│        ├─ nx.png
-│        ├─ ny.png
-│        ├─ nz.png
-│        ├─ px.png
-│        ├─ py.png
-│        └─ pz.png
+├─ .gitignore
 ├─ package-lock.json
 ├─ package.json
 ├─ tree.txt
