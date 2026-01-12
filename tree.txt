@@ -11,10 +11,11 @@ test_v01/
 │  │  └─ sources.js
 │  ├─ Scenes/
 │  │  ├─ Levels/
-│  │  │  ├─ BaseScene.js
 │  │  │  ├─ Level_1.js
-│  │  │  └─ Level_Boss.js
-│  │  ├─ CutsceneScene.js
+│  │  │  ├─ Level_Boss.js
+│  │  │  └─ LevelBase.js
+│  │  ├─ BaseScene.js
+│  │  ├─ IntroCutscene.js
 │  │  ├─ MenuScene.js
 │  │  ├─ SceneManager.js
 │  │  └─ SceneResources.js

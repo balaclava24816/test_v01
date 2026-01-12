@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import Sizes from "./Utils/Sizes.js"
 import Time from "./Utils/Time.js"
 import Camera from "./Camera.js"
-import Renderer from '../Renderer.js'
-import SceneManager from '../Scenes/SceneManager.js'
+import Renderer from './Renderer.js'
+import { SceneManager } from '../Scenes/SceneManager.js'
 //import Resources from './Utils/Resources.js'
 //import sources from './sources.js'
 
@@ -58,5 +58,6 @@ export default class Game
     {
         this.camera.update()
         this.renderer.update()
+        this.sceneManager.update(this.time.delta)
     }
 }
