@@ -3,7 +3,6 @@ test_v01/
 │  ├─ Game/
 │  │  ├─ Utils/
 │  │  │  ├─ EventEmitter.js
-│  │  │  ├─ Resources.js
 │  │  │  ├─ Sizes.js
 │  │  │  └─ Time.js
 │  │  ├─ Camera.js
@@ -12,12 +11,13 @@ test_v01/
 │  │  └─ sources.js
 │  ├─ Scenes/
 │  │  ├─ Levels/
+│  │  │  ├─ BaseScene.js
 │  │  │  ├─ Level_1.js
-│  │  │  ├─ Level_Boss.js
-│  │  │  └─ LevelBase.js
+│  │  │  └─ Level_Boss.js
 │  │  ├─ CutsceneScene.js
 │  │  ├─ MenuScene.js
-│  │  └─ SceneManager.js
+│  │  ├─ SceneManager.js
+│  │  └─ SceneResources.js
 │  ├─ index.html
 │  ├─ script.js
 │  └─ style.css

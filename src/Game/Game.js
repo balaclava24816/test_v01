@@ -4,8 +4,8 @@ import Time from "./Utils/Time.js"
 import Camera from "./Camera.js"
 import Renderer from '../Renderer.js'
 import SceneManager from '../Scenes/SceneManager.js'
-import Resources from './Utils/Resources.js'
-import sources from './sources.js'
+//import Resources from './Utils/Resources.js'
+//import sources from './sources.js'
 
 let instance = null
 
@@ -30,10 +30,10 @@ export default class Game
         this.sizes = new Sizes()
         this.time = new Time()
         this.scene = new THREE.Scene()
-        this.resources = new Resources(sources)
+        //this.resources = new Resources(sources)
         this.camera = new Camera()
         this.renderer = new Renderer()
-        this.sceneManager = new SceneManager()
+        this.sceneManager = new SceneManager(this.scene, this.camera, this.renderer)
         
         // Sizes resize event
         this.sizes.on('resize', () =>
