@@ -52,6 +52,7 @@ export default class Game
     {
         this.camera.resize()
         this.renderer.resize()
+        this.sceneManager.resize()
     }
 
     update()

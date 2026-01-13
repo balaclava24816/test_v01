@@ -104,11 +104,11 @@ export class SceneManager {
     /**
      * Обработка изменения размера окна
      */
-    onResize() {
-        if (this.currentScene && this.currentScene.onResize) {
-            this.currentScene.onResize();
-        }
+    resize() { 
+        if (this.currentScene && this.currentScene.resize) {
+            this.currentScene.resize();
     }
+}
     
     /**
      * Получение информации о текущей сцене
