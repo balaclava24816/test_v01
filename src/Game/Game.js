@@ -4,8 +4,7 @@ import Time from "./Utils/Time.js"
 import Camera from "./Camera.js"
 import Renderer from './Renderer.js'
 import { SceneManager } from '../Scenes/SceneManager.js'
-//import Resources from './Utils/Resources.js'
-//import sources from './sources.js'
+import Preloader from '../UI/Preloader.js'
 
 let instance = null
 
@@ -25,12 +24,15 @@ export default class Game
         
         // Options
         this.canvas = canvas
+
+        // Preloader
+        this.preloader = new Preloader('default')
+        this.preloader.show()
         
         // Setup
         this.sizes = new Sizes()
         this.time = new Time()
         this.scene = new THREE.Scene()
-        //this.resources = new Resources(sources)
         this.camera = new Camera()
         this.renderer = new Renderer()
         this.sceneManager = new SceneManager(this.scene, this.camera, this.renderer)
@@ -46,6 +48,10 @@ export default class Game
         {
             this.update()
         })
+
+        setTimeout(() => {
+        this.preloader.hide()
+        }, 3000)
     }
 
     resize()
