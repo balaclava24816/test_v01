@@ -101,3 +101,42 @@ body
     transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
   }
 }
+
+/* Кнопка меню */
+.menu-button {
+    position: fixed;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    padding: 15px 40px;
+    font-size: 24px;
+    font-weight: bold;
+    
+    background: linear-gradient(45deg, #ff6b6b, #ffa726);
+    color: white;
+    
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    transition: all 0.3s ease;
+    
+    z-index: 100; /* Поверх Three.js сцены */
+    pointer-events: auto;
+    
+    font-family: 'Arial', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.menu-button:hover {
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+}
+
+.menu-button:active {
+    transform: translateX(-50%) scale(0.98);
+}
+
