@@ -1,12 +1,12 @@
-import BaseScene from './BaseScene.js'
-import * as THREE from 'three'
+import BaseScene from './BaseScene.js';
+import * as THREE from 'three';
 
 export default class MenuScene extends BaseScene {
     constructor(scene, camera, renderer, resources, params = {}) {
         super(scene, camera, renderer, resources, params);
         this.menuModel = null;
         this.startButton = null;
-        this.mixer = null; // ← ДОБАВЬ ЭТО! Для анимаций
+        this.mixer = null; // ← Только микшер, не нужен сложный объект animation
     }
     
     async load() {
@@ -14,32 +14,11 @@ export default class MenuScene extends BaseScene {
         console.log('MenuScene: Загружаю меню из Blender...');
         
         try {
-            // Загружаем модель
             const gltf = await this.resources.loadGLTF('/models/menu_scene_v01.glb');
             this.menuModel = gltf.scene;
             this.scene.add(this.menuModel);
             
-            // 1. Проверяем анимации
-            console.log(`MenuScene: Найдено анимаций: ${gltf.animations?.length || 0}`);
-
-            console.log('MenuScene: Детали модели:', {
-                animations: gltf.animations.map(a => a.name),
-                duration: gltf.animations[0]?.duration,
-                tracks: gltf.animations[0]?.tracks?.length
-            });
-            
-            if (gltf.animations?.length > 0) {
-                // Создаём микшер для анимаций
-                this.mixer = new THREE.AnimationMixer(this.menuModel);
-                
-                gltf.animations.forEach((clip, index) => {
-                    const action = this.mixer.clipAction(clip);
-                    action.play();
-                    console.log(`MenuScene: Запущена анимация "${clip.name}"`);
-                });
-            }
-            
-            // 2. Ищем камеру
+            // Камера (оставляем как было)
             let foundCamera = false;
             gltf.scene.traverse((obj) => {
                 if (obj.isCamera) {
@@ -51,12 +30,33 @@ export default class MenuScene extends BaseScene {
             });
             
             if (!foundCamera) {
-                console.warn('MenuScene: Камера не найдена. Использую стандартную.');
+                console.warn('MenuScene: Камера не найдена');
                 this.camera.position.set(0, 2, 5);
                 this.camera.lookAt(0, 0, 0);
             }
             
-            // 3. Создаём кнопку
+            // ПРОСТАЯ НАСТРОЙКА АНИМАЦИИ (одна анимация)
+            if (gltf.animations && gltf.animations.length > 0) {
+                console.log(`MenuScene: Найдена анимация "${gltf.animations[0].name}"`);
+                
+                // 1. Создаём микшер
+                this.mixer = new THREE.AnimationMixer(this.menuModel);
+                
+                // 2. Берём ПЕРВУЮ анимацию
+                const clip = gltf.animations[0];
+                const action = this.mixer.clipAction(clip);
+                
+                // 3. Настраиваем
+                action.setLoop(THREE.LoopRepeat); // Бесконечное повторение
+                action.clampWhenFinished = false;
+                action.play();
+                
+                console.log('MenuScene: Анимация запущена');
+            } else {
+                console.warn('MenuScene: Анимаций не найдено');
+            }
+            
+            // Кнопка
             this.createStartButton();
             
         } catch (error) {
@@ -65,7 +65,7 @@ export default class MenuScene extends BaseScene {
     }
     
     update(deltaTime) {
-        // ОБЯЗАТЕЛЬНО: обновляем анимации каждый кадр
+        // ПРОСТОЕ ОБНОВЛЕНИЕ
         if (this.mixer) {
             this.mixer.update(deltaTime);
         }
@@ -99,15 +99,15 @@ export default class MenuScene extends BaseScene {
         }
     }
     
-    update(deltaTime) {
-        // Никаких тестовых кубов - пустой метод
-        // Вся логика в загруженной модели из Blender
-    }
-    
     dispose() {
+        if (this.mixer) {
+            this.mixer.stopAllAction();
+        }
+        
         if (this.startButton?.parentNode) {
             this.startButton.parentNode.removeChild(this.startButton);
         }
+        
         super.dispose();
     }
 }

@@ -65,6 +65,7 @@ export default class Game
     {
         this.camera.update()
         this.renderer.update()
-        this.sceneManager.update(this.time.delta)
+        const deltaInSeconds = this.time.delta * 0.001;
+        this.sceneManager.update(deltaInSeconds);
     }
 }
