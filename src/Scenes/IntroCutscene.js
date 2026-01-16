@@ -6,88 +6,131 @@ export default class IntroCutscene extends BaseScene {
         super(scene, camera, renderer, resources, params);
         this.cutsceneModel = null;
         this.mixer = null;
-        this.clock = new THREE.Clock();
         this.blenderCamera = null;
-        this.duration = 10; // 10 секунд катсцена
+        this.animationDuration = 0; // Будет браться из Blender
     }
     
     async load() {
-        await super.load();
-        console.log('IntroCutscene: Загружаю катсцену из Blender...');
+    await super.load();
+    
+    try {
+        const gltf = await this.resources.loadGLTF(this.params.modelPath);
+        this.cutsceneModel = gltf.scene;
         
-        if (!this.params.modelPath) {
-            console.error('IntroCutscene: Не указан путь к модели');
-            return;
+        // 1. ПЕРЕИМЕНОВЫВАЕМ КАМЕРУ ПЕРЕД ДОБАВЛЕНИЕМ В СЦЕНУ
+        let blenderCamera = null;
+        gltf.scene.traverse((obj) => {
+            if (obj.isCamera) {
+                console.log('IntroCutscene: Найдена камера в Blender, имя:', obj.name);
+                
+                // Переименовываем камеру чтобы совпадало с анимацией
+                obj.name = 'Camera001'; // ← КАК В АНИМАЦИИ BLENDER!
+                blenderCamera = obj;
+                
+                // Копируем в нашу камеру
+                this.camera.position.copy(obj.position);
+                this.camera.rotation.copy(obj.rotation);
+            }
+        });
+        
+        // ТОЛЬКО ПОСЛЕ переименования добавляем в сцену
+        this.scene.add(this.cutsceneModel);
+        
+        if (blenderCamera) {
+            this.blenderCamera = blenderCamera;
+            console.log('IntroCutscene: Камера переименована в Camera001');
         }
         
-        try {
-            // 1. Загружаем катсцену из Blender
-            const gltf = await this.resources.loadGLTF(this.params.modelPath);
-            this.cutsceneModel = gltf.scene;
-            this.scene.add(this.cutsceneModel);
+        // 2. Настраиваем анимации
+        if (gltf.animations?.length > 0) {
+            console.log(`IntroCutscene: Найдено ${gltf.animations.length} анимаций`);
             
-            // 2. Ищем и применяем камеру из Blender
-            let foundCamera = false;
-            gltf.scene.traverse((obj) => {
-                if (obj.isCamera) {
-                    console.log('IntroCutscene: Найдена камера в Blender катсцене:', obj);
-                    this.blenderCamera = obj;
-                    
-                    // Применяем параметры камеры
-                    this.camera.position.copy(obj.position);
-                    this.camera.rotation.copy(obj.rotation);
-                    
-                    if (obj.fov) this.camera.fov = obj.fov;
-                    if (obj.aspect) this.camera.aspect = obj.aspect;
-                    if (obj.near) this.camera.near = obj.near;
-                    if (obj.far) this.camera.far = obj.far;
-                    
-                    this.camera.updateProjectionMatrix();
-                    foundCamera = true;
-                }
+            this.mixer = new THREE.AnimationMixer(this.cutsceneModel);
+            
+            // Запускаем все анимации
+            gltf.animations.forEach((clip, index) => {
+                console.log(`  Запускаю анимацию: "${clip.name}"`);
+                const action = this.mixer.clipAction(clip);
+                action.clampWhenFinished = true;
+                action.play();
             });
             
-            if (!foundCamera) {
-                console.warn('IntroCutscene: Камера в катсцене не найдена. Использую стандартную.');
-            }
+            // Берём длительность из ПЕРВОЙ анимации
+            this.animationDuration = gltf.animations[0].duration;
+            console.log(`Длительность: ${this.animationDuration.toFixed(2)} сек`);
             
-            // 3. Запускаем анимации если есть
-            if (gltf.animations?.length > 0) {
-                this.mixer = new THREE.AnimationMixer(gltf.scene);
-                gltf.animations.forEach(clip => {
-                    const action = this.mixer.clipAction(clip);
-                    action.play();
-                    console.log(`IntroCutscene: Запущена анимация: ${clip.name}`);
-                });
-            }
+            this.animationStartTime = Date.now();
+            this.isAnimationPlaying = true;
             
-            console.log('IntroCutscene: Катсцена загружена. Длительность:', this.duration, 'сек');
+            console.log('IntroCutscene: Анимации запущены');
             
-            // 4. Автопереход через заданное время
-            setTimeout(() => this.endCutscene(), this.duration * 1000);
-            
-        } catch (error) {
-            console.error('IntroCutscene: Ошибка загрузки катсцены:', error);
-        }
-    }
-    
-    update(deltaTime) {
-        // Обновляем анимации если есть
-        if (this.mixer) {
-            this.mixer.update(deltaTime);
+        } else {
+            console.warn('IntroCutscene: Анимаций не найдено');
+            this.endCutscene();
         }
         
-        // Если нашли камеру в Blender и она анимирована,
-        // Three.js автоматически обновит её позицию через анимации
+    } catch (error) {
+        console.error('IntroCutscene: Ошибка:', error);
     }
-    
-    endCutscene() {
-        console.log('IntroCutscene: Катсцена завершена');
+}
+
+update(deltaTime) {
+    if (this.mixer && this.isAnimationPlaying) {
+        this.mixer.update(deltaTime);
         
-        if (window.game?.sceneManager) {
-            window.game.sceneManager.loadScene('level_1');
+        // Копируем позицию камеры КАЖДЫЙ КАДР
+        if (this.blenderCamera) {
+            this.camera.position.copy(this.blenderCamera.position);
+            this.camera.rotation.copy(this.blenderCamera.rotation);
+            
+            // Отладка: логируем позицию раз в секунду
+            if (Math.random() < 0.02) { // ~2% шанс
+                console.log('Camera position:', 
+                    this.camera.position.x.toFixed(2),
+                    this.camera.position.y.toFixed(2), 
+                    this.camera.position.z.toFixed(2)
+                );
+            }
+        }
+        
+        // Проверяем время
+        const elapsed = (Date.now() - this.animationStartTime) / 1000;
+        if (elapsed >= this.animationDuration) {
+            this.endCutscene();
         }
     }
+}
+
+update(deltaTime) {
+    if (this.mixer && this.isAnimationPlaying) {
+        this.mixer.update(deltaTime);
+        
+        // Копируем позицию камеры
+        if (this.blenderCamera) {
+            this.camera.position.copy(this.blenderCamera.position);
+            this.camera.rotation.copy(this.blenderCamera.rotation);
+        }
+        
+        // Проверяем, прошло ли достаточно времени
+        const elapsed = (Date.now() - this.animationStartTime) / 1000;
+        if (elapsed >= this.animationDuration) {
+            this.endCutscene();
+        }
+    }
+}
+
+// IntroCutscene.endCutscene():
+endCutscene() {
+    if (!this.isAnimationPlaying) return;
+    this.isAnimationPlaying = false;
+    
+    console.log('IntroCutscene: Катсцена завершена');
+    
+    // НЕ показываем прелоадер здесь - он покажется в SceneManager
+    if (window.game?.sceneManager) {
+        window.game.sceneManager.loadScene('level_1');
+    }
+}
     
     dispose() {
         if (this.mixer) {

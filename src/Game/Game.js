@@ -36,7 +36,7 @@ export default class Game
         this.camera = new Camera()
         this.renderer = new Renderer()
         this.sceneManager = new SceneManager(this.scene, this.camera, this.renderer)
-        
+        this.preloadCutscene();
         // Sizes resize event
         this.sizes.on('resize', () =>
         {
@@ -68,4 +68,14 @@ export default class Game
         const deltaInSeconds = this.time.delta * 0.001;
         this.sceneManager.update(deltaInSeconds);
     }
+    async preloadCutscene() {
+    try {
+        console.log('Game: Фоновая загрузка катсцены...');
+        // Используем общий resources из SceneManager
+        await this.sceneManager.resources.loadGLTF('/models/cutscene_intro_v01.glb');
+        console.log('Game: Катсцена загружена в кэш');
+    } catch (error) {
+        console.error('Game: Ошибка фоновой загрузки катсцены:', error);
+    }
+}
 }

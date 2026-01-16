@@ -38,38 +38,47 @@ export class SceneManager {
      * @param {object} params - Дополнительные параметры для сцены
      */
     async loadScene(sceneName, params = {}) {
-        console.log(`SceneManager: Загружаю сцену "${sceneName}"`);
-        
-        // 1. Находим класс сцены по имени в карте
-        const SceneClass = this.sceneRegistry.get(sceneName);
-        if (!SceneClass) {
-            console.error(`SceneManager: Сцена "${sceneName}" не найдена в реестре!`);
-            return;
-        }
-        
-        // 2. Останавливаем и очищаем текущую сцену (если она есть)
-        if (this.currentScene) {
-            console.log(`SceneManager: Очищаю предыдущую сцену "${this.currentSceneName}"`);
-            if (this.currentScene.dispose) {
-                this.currentScene.dispose();
-            }
-            // Очищаем Three.js сцену от всех объектов
-            this.clearScene();
-        }
-        
-        // 3. Создаём экземпляр новой сцены, передавая зависимости
-        const newScene = new SceneClass(this.scene, this.camera, this.renderer, this.resources, params);
-        
-        // 4. Загружаем сцену (асинхронно)
-        try {
-            await newScene.load();
-            this.currentScene = newScene;
-            this.currentSceneName = sceneName;
-            console.log(`SceneManager: Сцена "${sceneName}" успешно загружена.`);
-        } catch (error) {
-            console.error(`SceneManager: Ошибка загрузки сцены "${sceneName}":`, error);
-        }
+    console.log(`SceneManager: Загружаю сцену "${sceneName}"`);
+    
+    // 1. ПРЕЛОАДЕР перед Level_1 и Level_Boss
+    if ((sceneName === 'level_1' || sceneName === 'level_boss') && window.game?.preloader) {
+        const type = sceneName === 'level_boss' ? 'boss' : 'level';
+        window.game.preloader.show(type); // ← ТОЛЬКО ТИП!
     }
+    
+    // 2. Загрузка сцены (существующий код)
+    const SceneClass = this.sceneRegistry.get(sceneName);
+    if (!SceneClass) {
+        console.error(`SceneManager: Сцена "${sceneName}" не найдена!`);
+        if (window.game?.preloader) window.game.preloader.hide();
+        return;
+    }
+    
+    if (this.currentScene) {
+        console.log(`SceneManager: Очищаю предыдущую сцену "${this.currentSceneName}"`);
+        if (this.currentScene.dispose) this.currentScene.dispose();
+        this.clearScene();
+    }
+    
+    const newScene = new SceneClass(this.scene, this.camera, this.renderer, this.resources, params);
+    
+    try {
+        await newScene.load();
+        this.currentScene = newScene;
+        this.currentSceneName = sceneName;
+        console.log(`SceneManager: Сцена "${sceneName}" успешно загружена.`);
+    } catch (error) {
+        console.error(`SceneManager: Ошибка загрузки сцены "${sceneName}":`, error);
+    }
+    
+    // 3. СКРЫВАЕМ прелоадер после загрузки Level_1 или Level_Boss
+    if ((sceneName === 'level_1' || sceneName === 'level_boss') && window.game?.preloader) {
+        // Маленькая задержка чтобы показать прелоадер
+        setTimeout(() => {
+            window.game.preloader.hide();
+        }, 2000);
+    }
+}
     
     /**
      * Очистка Three.js сцены (удаляем все объекты)

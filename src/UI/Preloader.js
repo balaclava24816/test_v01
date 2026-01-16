@@ -10,57 +10,80 @@ export default class Preloader {
         this.element.id = 'preloader'
         this.element.className = 'preloader'
         
-        // Разный HTML в зависимости от типа
+        // Передаём только тип (текст будет по умолчанию)
         this.setContent(this.type)
         
         document.body.appendChild(this.element)
         this.hide()
     }
     
-    setContent(type) {
+    // Добавляем второй параметр hintText со значением по умолчанию
+    setContent(type, hintText = '') {
         const templates = {
             'default': `
                 <div class="preloader-content">
-                <div class="spinner">
-                    <div></div><div></div><div></div>
-                    <div></div><div></div><div></div>
+                    <div class="spinner">
+                        <div></div><div></div><div></div>
+                        <div></div><div></div><div></div>
+                    </div>
+                    <div class="hint">${hintText || 'Загрузка меню...'}</div>
                 </div>
-                <div class="hint">Загрузка меню...</div>
-            </div>
             `,
             'level': `
                 <div class="preloader-content">
-                <div class="spinner">
-                    <div></div><div></div><div></div>
-                    <div></div><div></div><div></div>
+                    <div class="spinner">
+                        <div></div><div></div><div></div>
+                        <div></div><div></div><div></div>
+                    </div>
+                    <div class="hint">${hintText || 'Генерируем уровень...'}</div>
                 </div>
-                <div class="hint">Генерируем уровень...</div>
-            </div>
             `,
             'boss': `
-                <div class="hint">Приготовьтесь к битве с боссом!</div>
-                <div class="boss-hint">Совет: уворачивайтесь от красных атак</div>
+                <div class="preloader-content">
+                    <div class="spinner">
+                        <div></div><div></div><div></div>
+                        <div></div><div></div><div></div>
+                    </div>
+                    <div class="hint">${hintText || 'Приготовьтесь к битве с боссом!'}</div>
+                </div>
+            `,
+            'cutscene': `
+                <div class="preloader-content">
+                    <div class="spinner">
+                        <div></div><div></div><div></div>
+                        <div></div><div></div><div></div>
+                    </div>
+                    <div class="hint">${hintText || 'Загрузка катсцены...'}</div>
+                </div>
             `
         }
         
         this.element.innerHTML = templates[type] || templates['default']
     }
     
-    // Меняем контент на лету
+    // Показывает прелоадер с определённым типом и текстом
+    show(type = this.type) {  // ← принимает только тип
+    this.type = type;
+    this.setContent(type); // hintText будет пустым → возьмётся из шаблона
+    this.element.style.display = 'flex';
+}
+    
+    // Меняет тип и текст на лету
     changeType(type, hintText = '') {
         this.type = type
-        this.setContent(type)
-        if (hintText) {
-            this.setHint(hintText)
-        }
-        this.show() // Показываем с новым контентом
+        this.setContent(type, hintText)
+        this.element.style.display = 'flex'
     }
     
+    // Устанавливает текст подсказки (если нужно менять отдельно)
     setHint(text) {
         const hintEl = this.element.querySelector('.hint')
-        if (hintEl) hintEl.textContent = text
+        if (hintEl) {
+            hintEl.textContent = text
+        }
     }
     
-    show() { this.element.style.display = 'flex' }
-    hide() { this.element.style.display = 'none' }
+    hide() {
+        this.element.style.display = 'none'
+    }
 }
