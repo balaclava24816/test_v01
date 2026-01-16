@@ -105,38 +105,37 @@ body
 /* Кнопка меню */
 .menu-button {
     position: fixed;
-    bottom: 20%;
+    bottom: 15%;
     left: 50%;
     transform: translateX(-50%);
     
-    padding: 15px 40px;
-    font-size: 24px;
-    font-weight: bold;
-    
-    background: linear-gradient(45deg, #ff6b6b, #ffa726);
-    color: white;
-    
+    background: transparent;
     border: none;
-    border-radius: 10px;
-    cursor: pointer;
+    padding: 0;
     
-    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-    transition: all 0.3s ease;
-    
-    z-index: 100; /* Поверх Three.js сцены */
-    pointer-events: auto;
-    
-    font-family: 'Arial', sans-serif;
-    letter-spacing: 1px;
+    color: #cccccc;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 2px;
     text-transform: uppercase;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    
+    transition: all 0.3s ease;
+    outline: none;
+    cursor: pointer;
+        
+    z-index: 100;
 }
 
+/* Только белый glow при наведении */
 .menu-button:hover {
-    transform: translateX(-50%) scale(1.05);
-    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
 }
 
-.menu-button:active {
-    transform: translateX(-50%) scale(0.98);
+@media (max-width: 768px) {
+    .menu-button {
+        font-size: 19px;
+        bottom: 10%;
+    }
 }
-
